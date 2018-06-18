@@ -7,10 +7,11 @@ const generateAggregation = {
 	body: Joi.object().keys({
 		mustMatch: Joi.object().min(1),
 		shouldMatch: Joi.object().min(1),
-		sort: Joi.object(),
-		aggregations : Joi.object().min(1)
+		sort: Joi.string(),
+		unwind: Joi.string(),
+		aggregations: Joi.object().min(1)
 	})
 }
- module.exports = {
+module.exports = {
 	generateAggregation
- }
+}
