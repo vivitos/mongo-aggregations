@@ -22,17 +22,25 @@ function processMatch(query) {
 function processGroup(group) {
 	const g = {};
 
-	if (group.fields && group.fields.length) {
-		g['_id'] = _.reduce(group.fields, (acc, cur) => {
-			acc[cur] = `$${cur}`;
-			return acc;
-		}, {});
+	if (group.dimensions && group.dimensions.length) {
+		if (_.isString(group.dimensions)) {
+			g['_id'] = `$${group.dimensions}`
+		} else {
+			g['_id'] = _.reduce(group.dimensions, (accumulator, dimension) => {
+				accumulator[dimension] = `$${dimension}`;
+				return accumulator;
+			}, {});
+		}
 	}
 
 	if (group.sumBy && group.sumBy.length) {
-		_.forEach(group.sumBy, (field) => {
-			g[field] = { $sum: `$${field}` }
-		});
+		if (_.isString(group.sumBy)) {
+			g[group.sumBy] = { $sum: `$${group.sumBy}` }
+		} else {
+			_.forEach(group.sumBy, (field) => {
+				g[field] = { $sum: `$${field}` }
+			});
+		}
 	}
 
 	return g;
