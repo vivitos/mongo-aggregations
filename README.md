@@ -1,31 +1,135 @@
-# node-skeleton
+# Query Simple Model
+```json
+{
+	"shouldMatch": {
+		"date": {
+			"between": ["greatestThanOrEqual", "lighterThanOrEqual"]
+		},
+		"myField": "matchingPattern"
+	},
+	"mustMatch": {
+		"myNumericalField": 0,
+		"anotherField": {
+			"in": ["firstPattern", "secondPattern", "thirdPattern"]
+		}
+	},
+	"sort": "sortField",
+	"unwind": "unwindField"
+}
+```
+This will generate the query below :
+```json
+[
+    {
+        "$match": {
+            "$or": [
+                {
+                    "date": {
+                        "$gte": "greatestThanOrEqual",
+                        "$lte": "lighterThanOrEqual"
+                    }
+                },
+                {
+                    "myField": "matchingPattern"
+                }
+            ]
+        }
+    },
+    {
+        "$match": {
+            "$and": [
+                {
+                    "myNumericalField": 0
+                },
+                {
+                    "anotherField": {
+                        "$in": [
+                            "firstPattern",
+                            "secondPattern",
+                            "thirdPattern"
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "$sort": "sortField"
+    },
+    {
+        "$unwind": "$unwindField"
+    }
+]
+```
+---
 
-Node JS API skeleton
+# Query Multiple Aggregations Model
 
-## Installation
-
-```bash
-npm install
+```json
+{
+	"mustMatch": {
+		"myNumericalField": 0,
+		"anotherField": {
+			"in": ["firstPattern", "secondPattern", "thirdPattern"]
+		}
+	},
+	"aggregations": {
+		"firstFacetsAggregation": {
+			"mustMatch": {
+			"myNumericalField": 0,
+			"anotherField": {
+				"in": ["firstPattern", "secondPattern", "thirdPattern"]
+				}
+			}
+		}
+	}
+}
 ```
 
-## Development
-
-```bash
-npm run dev
-```
-
-API server will listen on [http://localhost:8000](http://localhost:8000) & watch for changes to restart.
-
-## Production
-
-```bash
-npm start
-```
-
-## Tests
-
-The tests are made with [AVA](https://github.com/avajs/ava), [nyc](https://github.com/istanbuljs/nyc) and [mono-test-utils](https://github.com/terrajs/mono-test-utils) in `test/`:
-
-```bash
-npm test
+This will generate the query below :
+```json
+[
+    {
+        "$match": {
+            "$and": [
+                {
+                    "myNumericalField": 0
+                },
+                {
+                    "anotherField": {
+                        "$in": [
+                            "firstPattern",
+                            "secondPattern",
+                            "thirdPattern"
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "$facet": {
+            "firstFacetsAggregation": [
+                {
+                    "$match": {
+                        "$and": [
+                            {
+                                "myNumericalField": 0
+                            },
+                            {
+                                "anotherField": {
+                                    "$in": [
+                                        "firstPattern",
+                                        "secondPattern",
+                                        "thirdPattern"
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+]
 ```
