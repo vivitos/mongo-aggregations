@@ -82,6 +82,10 @@ This will generate the query below :
 				}
 			}
 		}
+	},
+	"group": {
+		"fields": ["toGroup1", "toGroup2"],
+		"sumBy": ["value", "unit"]
 	}
 }
 ```
@@ -105,6 +109,20 @@ This will generate the query below :
                     }
                 }
             ]
+        }
+    },
+    {
+        "$group": {
+            "_id": {
+                "toGroup1": "$toGroup1",
+                "toGroup2": "$toGroup2"
+            },
+            "value": {
+                "$sum": "$value"
+            },
+            "unit": {
+                "$sum": "$unit"
+            }
         }
     },
     {
