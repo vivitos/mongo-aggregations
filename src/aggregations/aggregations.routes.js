@@ -1,16 +1,16 @@
 const aggregationValidation = require('./aggregations.validation')
-const AggregtionsController = require('./aggregations.controller')
+const AggregationsController = require('./aggregations.controller')
 
 module.exports = [
 	{
 		method: 'POST',
 		path: '/aggregations',
 		validation: aggregationValidation.generateAggregation,
-		handler: AggregtionsController.generateAggregation
+		handler: AggregationsController.generateAggregation
 	},
 	{
 		method: 'GET',
 		path: '/ping',
-		handler: AggregtionsController.pingDb
+		handler: AggregationsController.pingDb
 	}
 ]
