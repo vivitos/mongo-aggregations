@@ -15,5 +15,5 @@ coverage
 # Misc
 .DS_Store
 
-#Configuartion files
+# Configuration files
 conf
