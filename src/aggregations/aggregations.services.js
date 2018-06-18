@@ -21,11 +21,12 @@ function processMatch(query) {
 function mapAggregationQuery(query) {
 	const q = [];
 
-	if (query.shouldMatch) q.push({ '$match': { '$or': _.map(query.shouldMatch, (field, name) => { return { [name]: processMatch(field) }})}})
-	if (query.mustMatch) q.push({ '$match': { '$and': _.map(query.mustMatch, (field, name) => { return { [name]: processMatch(field) }})}})
+	if (query.shouldMatch) q.push({ '$match': { '$or': _.map(query.shouldMatch, (field, name) => { return { [name]: processMatch(field) } }) } })
+	if (query.mustMatch) q.push({ '$match': { '$and': _.map(query.mustMatch, (field, name) => { return { [name]: processMatch(field) } }) } })
 	if (query.sort) q.push({ '$sort': query.sort })
+	if (query.unwind) q.push({ '$unwind': `$${query.unwind}` })
 
-	if (query.aggregations) q.push({ "$facet": _.mapValues(query.aggregations, (aggs) => { return mapAggregationQuery(aggs)}) })
+	if (query.aggregations) q.push({ "$facet": _.mapValues(query.aggregations, (aggs) => { return mapAggregationQuery(aggs) }) })
 
 	return q;
 }
@@ -41,6 +42,15 @@ function aggregate(options, next) {
 	// })
 }
 
+function findOne(next) {
+	db.collection("perfo_data").findOne({}, {}, (err, cursor) => {
+		if (err) return next(err);
+
+		return next(null, cursor);
+	})
+}
+
 module.exports = {
-	aggregate
+	aggregate,
+	findOne
 }

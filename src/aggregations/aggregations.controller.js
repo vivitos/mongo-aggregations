@@ -15,3 +15,11 @@ exports.generateAggregation = (req, res, next) => {
 		// 	.pipe(res.type('json'));
 	})
 }
+
+exports.pingDb = (req, res, next) => {
+	Aggregations.findOne((err, result) => {
+		if (err) return next(err);
+
+		res.json(result);
+	})
+}
