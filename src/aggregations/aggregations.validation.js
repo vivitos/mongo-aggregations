@@ -9,6 +9,7 @@ const generateAggregation = {
 		shouldMatch: Joi.object().min(1),
 		sort: Joi.string(),
 		unwind: Joi.string(),
+		group: Joi.object(),
 		aggregations: Joi.object().min(1)
 	})
 }

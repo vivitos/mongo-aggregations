@@ -1,5 +1,6 @@
 const { db } = require('mono-mongodb')
 const _ = require('lodash');
+const conf = require('../../conf/application');
 
 function processMatch(query) {
 	const q = {};
@@ -18,6 +19,25 @@ function processMatch(query) {
 	return q;
 }
 
+function processGroup(group) {
+	const g = {};
+
+	if (group.fields && group.fields.length) {
+		g['_id'] = _.reduce(group.fields, (acc, cur) => {
+			acc[cur] = `$${cur}`;
+			return acc;
+		}, {});
+	}
+
+	if (group.sumBy && group.sumBy.length) {
+		_.forEach(group.sumBy, (field) => {
+			g[field] = { $sum: `$${field}` }
+		});
+	}
+
+	return g;
+}
+
 function mapAggregationQuery(query) {
 	const q = [];
 
@@ -25,6 +45,7 @@ function mapAggregationQuery(query) {
 	if (query.mustMatch) q.push({ '$match': { '$and': _.map(query.mustMatch, (field, name) => { return { [name]: processMatch(field) } }) } })
 	if (query.sort) q.push({ '$sort': query.sort })
 	if (query.unwind) q.push({ '$unwind': `$${query.unwind}` })
+	if (query.group) q.push({ '$group': processGroup(query.group) })
 
 	if (query.aggregations) q.push({ "$facet": _.mapValues(query.aggregations, (aggs) => { return mapAggregationQuery(aggs) }) })
 
@@ -32,18 +53,15 @@ function mapAggregationQuery(query) {
 }
 
 function aggregate(options, next) {
+	db.collection(`${conf.aggregations.collection}`).aggregate(mapAggregationQuery(options), {}, (err, cursor) => {
+		if (err) return next(err);
 
-	return next(null, mapAggregationQuery(options));
-
-	// db.collection("perfo_data").aggregate(options, {}, (err, cursor) => {
-	// 	if (err) return next(err);
-
-	// 	return next(null, cursor);
-	// })
+		return next(null, cursor);
+	})
 }
 
 function findOne(next) {
-	db.collection("perfo_data").findOne({}, {}, (err, cursor) => {
+	db.collection(`${conf.aggregations.collection}`).findOne({}, {}, (err, cursor) => {
 		if (err) return next(err);
 
 		return next(null, cursor);

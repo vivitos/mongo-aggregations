@@ -8,11 +8,9 @@ exports.generateAggregation = (req, res, next) => {
 	Aggregations.aggregate(query, (err, cursor) => {
 		if (err) return next(err)
 
-		res.json(cursor);
-
-		// cursor
-		// 	.pipe(JSONStream.stringify())
-		// 	.pipe(res.type('json'));
+		cursor
+			.pipe(JSONStream.stringify())
+			.pipe(res.type('json'));
 	})
 }
 
