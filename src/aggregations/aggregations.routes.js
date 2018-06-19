@@ -5,12 +5,14 @@ module.exports = [
 	{
 		method: 'POST',
 		path: '/aggregations',
+		session: true,
 		validation: aggregationValidation.generateAggregation,
 		handler: AggregationsController.generateAggregation
 	},
 	{
 		method: 'GET',
-		path: '/ping',
+		path: '/pingdb',
+		session: true,
 		handler: AggregationsController.pingDb
 	}
 ]

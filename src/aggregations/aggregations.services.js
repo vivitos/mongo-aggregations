@@ -1,6 +1,6 @@
 const { db } = require('mono-mongodb')
 const _ = require('lodash');
-const conf = require('../../conf/application');
+const { conf } = require('@terrajs/mono');
 
 function processMatch(query) {
 	const q = {};
