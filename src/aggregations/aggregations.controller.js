@@ -14,10 +14,11 @@ exports.generateAggregation = (req, res, next) => {
 	})
 }
 
-exports.pingDb = (req, res, next) => {
-	Aggregations.findOne((err, result) => {
-		if (err) return next(err);
-
-		res.json(result);
-	})
+exports.pingDb = async (req, res, next) => {
+	try {
+		const response = await Aggregations.findOne()
+		res.json(response);
+	} catch (err) {
+		return next(err);
+	}
 }

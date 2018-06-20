@@ -2,33 +2,31 @@ const bcrypt = require('bcrypt');
 const { db } = require('mono-mongodb');
 const { HttpError } = require('@terrajs/mono');
 
-exports.findByMail = (email, next) => {
-	db.collection('users').findOne({ email }, {}, (err, user) => {
-		if (err) return next(err);
-
-		return next(null, user);
-	})
+exports.findByMail = async (email) => {
+	try {
+		return await db.collection('users').findOne({ email })
+	} catch (err) {
+		throw new Error(err);
+	}
 }
 
-exports.addUser = (user, next) => {
+exports.addUser = async (user) => {
 	const { password } = user;
 
-	bcrypt.hash(password, 10, (err, hash) => {
-		if (err) return next(err);
-
-		db.collection('users').insertOne({ ...user, password: hash }, {}, (err, result) => {
-			if (err) return next(err);
-
-			return next(null, result);
-		})
-	});
+	try {
+		const hash = await bcrypt.hash(password, 10);
+		return await db.collection('users').insertOne({ ...user, password: hash });
+	} catch (err) {
+		throw new Error(err);
+	}
 }
 
-exports.checkPassword = (password, encryptedPassword, next) => {
-	bcrypt.compare(password, encryptedPassword, (err, check) => {
-		if (err) return next(err);
-		if (!check) return next(new HttpError('Wrong password', 400))
+exports.checkPassword = async (password, encryptedPassword) => {
+	try {
+		const check = await bcrypt.compare(password, encryptedPassword);
+		if (!check) throw new HttpError('Wrong password', 400);
 
-		return next();
-	})
+	} catch (err) {
+		throw new Error(err);
+	}
 }

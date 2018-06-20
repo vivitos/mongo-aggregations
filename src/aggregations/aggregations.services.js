@@ -68,12 +68,12 @@ function aggregate(options, next) {
 	})
 }
 
-function findOne(next) {
-	db.collection(`${conf.aggregations.collection}`).findOne({}, {}, (err, cursor) => {
-		if (err) return next(err);
-
-		return next(null, cursor);
-	})
+async function findOne() {
+	try {
+		return await db.collection(`${conf.aggregations.collection}`).findOne({}, {});
+	} catch (err) {
+		throw new Error(err);
+	}
 }
 
 module.exports = {
