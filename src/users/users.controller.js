@@ -34,7 +34,3 @@ exports.signIn = async (req, res, next) => {
 		return next(err);
 	}
 }
-
-exports.checkToken = (req, res) => {
-	res.json();
-}
