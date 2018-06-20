@@ -19,6 +19,13 @@ module.exports = {
 		// See https://terrajs.org/mono/configuration/log
 		log: {
 			level: 'verbose'
+		},
+		jwt: {
+			secret: 'yourSecretKey',
+			options: {
+				algorithm: 'HS384',
+				expiresIn: '7d'
+			}
 		}
 	}
 }
