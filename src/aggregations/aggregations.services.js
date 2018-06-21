@@ -1,6 +1,5 @@
 const { db } = require('mono-mongodb')
 const _ = require('lodash');
-const { conf } = require('@terrajs/mono');
 
 function processMatch(query) {
 	const q = {};
@@ -31,7 +30,7 @@ function processGroup(group) {
 				return accumulator;
 			}, {});
 		}
-	}
+	} else g['_id'] = null;
 
 	if (group.sumBy && group.sumBy.length) {
 		if (_.isString(group.sumBy)) {
@@ -49,34 +48,34 @@ function processGroup(group) {
 function mapAggregationQuery(query) {
 	const q = [];
 
-	if (query.shouldMatch) q.push({ '$match': { '$or': _.map(query.shouldMatch, (field, name) => { return { [name]: processMatch(field) } }) } })
-	if (query.mustMatch) q.push({ '$match': { '$and': _.map(query.mustMatch, (field, name) => { return { [name]: processMatch(field) } }) } })
-	if (query.sort) q.push({ '$sort': query.sort })
-	if (query.unwind) q.push({ '$unwind': `$${query.unwind}` })
-	if (query.group) q.push({ '$group': processGroup(query.group) })
+	const {
+		shouldMatch,
+		mustMatch,
+		sort,
+		unwind,
+		group,
+		aggregations
+	} = query;
 
-	if (query.aggregations) q.push({ "$facet": _.mapValues(query.aggregations, (aggs) => { return mapAggregationQuery(aggs) }) })
+	if (shouldMatch) q.push({ '$match': { '$or': _.map(shouldMatch, (field, name) => { return { [name]: processMatch(field) } }) } })
+	if (mustMatch) q.push({ '$match': { '$and': _.map(mustMatch, (field, name) => { return { [name]: processMatch(field) } }) } })
+	if (sort) q.push({ '$sort': sort })
+	if (unwind) q.push({ '$unwind': `$${unwind}` })
+	if (group) q.push({ '$group': processGroup(group) })
+
+	if (aggregations) q.push({ "$facet": _.mapValues(aggregations, (aggs) => { return mapAggregationQuery(aggs) }) })
 
 	return q;
 }
 
 function aggregate(options, next) {
-	db.collection(`${conf.aggregations.collection}`).aggregate(mapAggregationQuery(options), {}, (err, cursor) => {
+	db.collection(options.collection).aggregate(mapAggregationQuery(options), {}, (err, cursor) => {
 		if (err) return next(err);
 
 		return next(null, cursor);
 	})
 }
 
-async function findOne() {
-	try {
-		return await db.collection(`${conf.aggregations.collection}`).findOne({}, {});
-	} catch (err) {
-		throw new Error(err);
-	}
-}
-
 module.exports = {
-	aggregate,
-	findOne
+	aggregate
 }
