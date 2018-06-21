@@ -4,9 +4,6 @@
 */
 
 module.exports = {
-	aggregations: {
-		collection: "myCollection"
-	},
 	mono: {
 		// See https://terrajs.org/mono/configuration/modules
 		modules: [
