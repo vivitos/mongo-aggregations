@@ -27,14 +27,14 @@ npm start
 ### Users
 + ```POST /users/signup```
     Body :
-    ```json
+    ```javascript
     {
         "email": "user@domain.com",
         "password": "myPassword"
     }
     ```
     Response:
-    ```json
+    ```javascript
     {
         "token": "jwtToken" //Expired in seven days by default, you can configure it in conf files
     }
@@ -42,14 +42,14 @@ npm start
 
 + ```POST /users/signin```
     Body :
-    ```json
+    ```javascript
     {
         "email": "user@domain.com",
         "password": "myPassword"
     }
     ```
     Response:
-    ```json
+    ```javascript
     {
         "token": "jwtToken" //Expired in seven days by default, you can configure it in conf files
     }
@@ -59,7 +59,7 @@ npm start
 
 + ```POST /users/signin```
     Body:
-   ```json
+   ```javascript
     {
         "shouldMatch": { // Match one of the following conditions
             "date": { // My field (date as example)
@@ -112,7 +112,7 @@ npm start
 
 ## Examples
 ### Query Simple Model
-```json
+```javascript
 {
 	"shouldMatch": {
 		"date": {
@@ -131,7 +131,7 @@ npm start
 }
 ```
 This will generate the query below :
-```json
+```javascript
 [
     {
         "$match": {
@@ -178,7 +178,7 @@ This will generate the query below :
 
 ### Query Multiple Aggregations Model
 
-```json
+```javascript
 {
 	"mustMatch": {
 		"myNumericalField": 0,
@@ -204,7 +204,7 @@ This will generate the query below :
 ```
 
 This will generate and execute the query below :
-```json
+```javascript
 [
     {
         "$match": {
