@@ -1,6 +1,5 @@
 const { db } = require('mono-mongodb')
 const _ = require('lodash');
-const { conf } = require('@terrajs/mono');
 
 function processMatch(query) {
 	const q = {};
@@ -68,15 +67,6 @@ function aggregate(options, next) {
 	})
 }
 
-async function findOne() {
-	try {
-		return await db.collection(`${conf.aggregations.collection}`).findOne({}, {});
-	} catch (err) {
-		throw new Error(err);
-	}
-}
-
 module.exports = {
-	aggregate,
-	findOne
+	aggregate
 }

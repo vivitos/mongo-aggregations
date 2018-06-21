@@ -13,12 +13,3 @@ exports.generateAggregation = (req, res, next) => {
 			.pipe(res.type('json'));
 	})
 }
-
-exports.pingDb = async (req, res, next) => {
-	try {
-		const response = await Aggregations.findOne()
-		res.json(response);
-	} catch (err) {
-		return next(err);
-	}
-}

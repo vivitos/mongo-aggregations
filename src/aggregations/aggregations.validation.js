@@ -14,6 +14,7 @@ const generateAggregation = {
 		aggregations: Joi.object().min(1)
 	})
 }
+
 module.exports = {
 	generateAggregation
 }
