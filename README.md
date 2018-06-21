@@ -84,7 +84,7 @@ This will generate the query below :
 		}
 	},
 	"group": {
-		"fields": ["toGroup1", "toGroup2"],
+		"dimensions": ["toGroup1", "toGroup2"],
 		"sumBy": ["value", "unit"]
 	}
 }
