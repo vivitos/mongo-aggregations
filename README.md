@@ -1,4 +1,117 @@
-# Query Simple Model
+## Getting started
+This project is built with [Mono](https://mono.js.org/#/).
+
+```bash
+git clone https://github.com/vivitos/mongo-aggregations.git
+cd mongo-aggregations
+npm install
+```
+
+Don't forget to configure your MongoDB url and your dbName in configurations files in the /conf folder. For more information on configuration file [click here](https://mono.js.org/#/configuration).
+
+
+__DON'T FORGET TO CHANGE YOUR JWT SECRET KEY IN CONF FILES__
+
+Then, depending on your environment, run the following command
+
+```bash
+# Development
+npm run dev
+
+# Production
+npm start
+```
+
+## Routes
+
+### Users
++ ```POST /users/signup```
+    Body :
+    ```json
+    {
+        "email": "user@domain.com",
+        "password": "myPassword"
+    }
+    ```
+    Response:
+    ```json
+    {
+        "token": "jwtToken" //Expired in seven days by default, you can configure it in conf files
+    }
+    ```
+
++ ```POST /users/signin```
+    Body :
+    ```json
+    {
+        "email": "user@domain.com",
+        "password": "myPassword"
+    }
+    ```
+    Response:
+    ```json
+    {
+        "token": "jwtToken" //Expired in seven days by default, you can configure it in conf files
+    }
+    ```
+
+### Aggregations
+
++ ```POST /users/signin```
+    Body:
+   ```json
+    {
+        "shouldMatch": { // Match one of the following conditions
+            "date": { // My field (date as example)
+                "between": ["greatestThanOrEqual", "lighterThanOrEqual"] // Match all values between head and tail of the array
+            },
+            "myField": "matchingPattern" // Match the pattern
+        },
+        "mustMatch": { // Match all of the conditions
+            "myNumericalField": 0, // Work with all kind of fields
+            "anotherField": {
+                "in": ["firstPattern", "secondPattern", "thirdPattern"] // Match an array element
+            }
+        },
+
+        // If you want to do more than one aggregations at a time, you should use 'aggregations'.
+        // It works like other aggregations. See examples
+        "aggregations": {
+            "myFirstAggregation": { // First aggregation
+                "mustMatch": {
+                "myNumericalField": 0,
+                "anotherField": {
+                    "in": ["firstPattern", "secondPattern", "thirdPattern"]
+                    }
+                },
+                "sort": "sortField", // Sort aggregation
+                "unwind": "unwindField", // Unwind the aggregation
+                "group": {
+                    "dimensions": ["dim1", "dim2"], // The dimensions to group (string or array)
+                    "sumBy": ["value", "unit"] // The dimension to sum (string or array)
+                }
+            },
+             "mySecondAggregation": { // Second aggregation
+                "mustMatch": {
+                "myNumericalField": 0,
+                "anotherField": {
+                    "in": ["firstPattern", "secondPattern", "thirdPattern"]
+                    }
+                },
+                "sort": "sortField",
+                "unwind": "unwindField",
+                "group": {
+                    "dimensions": ["toGroup1", "toGroup2"],
+                    "sumBy": ["value", "unit"]
+                }
+            }
+        }
+    }
+    ```
+    Response: Your mongodb aggregation
+
+## Examples
+### Query Simple Model
 ```json
 {
 	"shouldMatch": {
@@ -63,7 +176,7 @@ This will generate the query below :
 ```
 ---
 
-# Query Multiple Aggregations Model
+### Query Multiple Aggregations Model
 
 ```json
 {
@@ -90,7 +203,7 @@ This will generate the query below :
 }
 ```
 
-This will generate the query below :
+This will generate and execute the query below :
 ```json
 [
     {
