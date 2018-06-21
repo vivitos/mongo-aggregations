@@ -61,7 +61,7 @@ function mapAggregationQuery(query) {
 }
 
 function aggregate(options, next) {
-	db.collection(`${conf.aggregations.collection}`).aggregate(mapAggregationQuery(options), {}, (err, cursor) => {
+	db.collection(options.collection).aggregate(mapAggregationQuery(options), {}, (err, cursor) => {
 		if (err) return next(err);
 
 		return next(null, cursor);
