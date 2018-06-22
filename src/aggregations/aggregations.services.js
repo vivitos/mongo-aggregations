@@ -18,25 +18,25 @@ function processMatch(query) {
 	return q;
 }
 
-function processGroup(group) {
+function processGroup({ dimensions, sumBy }) {
 	const g = {};
 
-	if (group.dimensions && group.dimensions.length) {
-		if (_.isString(group.dimensions)) {
-			g['_id'] = `$${group.dimensions}`
+	if (dimensions && dimensions.length) {
+		if (_.isString(dimensions)) {
+			g['_id'] = `$${dimensions}`
 		} else {
-			g['_id'] = _.reduce(group.dimensions, (accumulator, dimension) => {
+			g['_id'] = _.reduce(dimensions, (accumulator, dimension) => {
 				accumulator[dimension] = `$${dimension}`;
 				return accumulator;
 			}, {});
 		}
 	} else g['_id'] = null;
 
-	if (group.sumBy && group.sumBy.length) {
-		if (_.isString(group.sumBy)) {
-			g[group.sumBy] = { $sum: `$${group.sumBy}` }
+	if (sumBy && sumBy.length) {
+		if (_.isString(sumBy)) {
+			g[sumBy] = { $sum: `$${sumBy}` }
 		} else {
-			_.forEach(group.sumBy, (field) => {
+			_.forEach(sumBy, (field) => {
 				g[field] = { $sum: `$${field}` }
 			});
 		}
@@ -45,17 +45,8 @@ function processGroup(group) {
 	return g;
 }
 
-function mapAggregationQuery(query) {
+function mapAggregationQuery({ shouldMatch, mustMatch, sort, unwind, group, aggregations }) {
 	const q = [];
-
-	const {
-		shouldMatch,
-		mustMatch,
-		sort,
-		unwind,
-		group,
-		aggregations
-	} = query;
 
 	if (shouldMatch) q.push({ '$match': { '$or': _.map(shouldMatch, (field, name) => { return { [name]: processMatch(field) } }) } })
 	if (mustMatch) q.push({ '$match': { '$and': _.map(mustMatch, (field, name) => { return { [name]: processMatch(field) } }) } })
