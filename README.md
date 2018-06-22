@@ -26,14 +26,14 @@ npm start
 
 ### Users
 + ```POST /users/signup```
-    Body :
+    + Body :
     ```javascript
     {
         "email": "user@domain.com",
         "password": "myPassword"
     }
     ```
-    Response:
+    + Response:
     ```javascript
     {
         "token": "jwtToken" //Expired in seven days by default, you can configure it in conf files
@@ -41,14 +41,14 @@ npm start
     ```
 
 + ```POST /users/signin```
-    Body :
+    + Body :
     ```javascript
     {
         "email": "user@domain.com",
         "password": "myPassword"
     }
     ```
-    Response:
+    + Response:
     ```javascript
     {
         "token": "jwtToken" //Expired in seven days by default, you can configure it in conf files
@@ -58,7 +58,7 @@ npm start
 ### Aggregations
 
 + ```POST /users/signin```
-    Body:
+    + Body:
    ```javascript
     {
         "shouldMatch": { // Match one of the following conditions
@@ -108,7 +108,7 @@ npm start
         }
     }
     ```
-    Response: Your mongodb aggregation
+    + Response: Your mongodb aggregation
 
 ## Examples
 ### Query Simple Model
