@@ -63,7 +63,7 @@ npm start
     {
         "shouldMatch": { // Match one of the following conditions
             "date": { // My field (date as example)
-                "between": ["greatestThanOrEqual", "lighterThanOrEqual"] // Match all values between head and tail of the array
+                "between": ["greatestThanOrEqual", "lessThanOrEqual"] // Match all values between head and tail of the array
             },
             "myField": "matchingPattern" // Match the pattern
         },
@@ -111,12 +111,13 @@ npm start
     + Response: Your mongodb aggregation
 
 ## Examples
+
 ### Query Simple Model
 ```javascript
 {
 	"shouldMatch": {
 		"date": {
-			"between": ["greatestThanOrEqual", "lighterThanOrEqual"]
+			"between": ["greatestThanOrEqual", "lessThanOrEqual"]
 		},
 		"myField": "matchingPattern"
 	},
@@ -139,7 +140,7 @@ This will generate the query below :
                 {
                     "date": {
                         "$gte": "greatestThanOrEqual",
-                        "$lte": "lighterThanOrEqual"
+                        "$lte": "lessThanOrEqual"
                     }
                 },
                 {
