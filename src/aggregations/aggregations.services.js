@@ -24,11 +24,13 @@ function processGroup({ dimensions, sumBy }) {
 	if (dimensions && dimensions.length) {
 		if (_.isString(dimensions)) {
 			g['_id'] = `$${dimensions}`
+			g[dimensions] = { '$first': `$${dimensions}` }
 		} else {
 			g['_id'] = _.reduce(dimensions, (accumulator, dimension) => {
 				accumulator[dimension] = `$${dimension}`;
 				return accumulator;
 			}, {});
+			_.forEach(dimensions, (dim) => { g[dim] = { '$first': `$${dim}` } })
 		}
 	} else g['_id'] = null;
 
@@ -52,7 +54,10 @@ function mapAggregationQuery({ shouldMatch, mustMatch, sort, unwind, group, aggr
 	if (mustMatch) q.push({ '$match': { '$and': _.map(mustMatch, (field, name) => { return { [name]: processMatch(field) } }) } })
 	if (sort) q.push({ '$sort': sort })
 	if (unwind) q.push({ '$unwind': `$${unwind}` })
-	if (group) q.push({ '$group': processGroup(group) })
+	if (group) {
+		q.push({ '$group': processGroup(group) })
+		q.push({ '$project': { _id: 0 } });
+	}
 
 	if (aggregations) q.push({ "$facet": _.mapValues(aggregations, (aggs) => { return mapAggregationQuery(aggs) }) })
 
